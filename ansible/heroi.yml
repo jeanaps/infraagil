@@ -1,0 +1,73 @@
+---
+- name: Playbook do Bruce
+  hosts: all
+  vars: 
+    username: capuz_vermelho
+  tasks:
+    - name: Verificar Memoria
+      command: free -h
+
+    - name: Removendo SL - Ubuntu
+      apt: name=sl state=absent update_cache=yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Instalando Pacotes - UBUNTU
+      apt: 
+        name: ['cowsay','vim',]
+#      apt: name=nginx state=absent 
+      notify: restart
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Removendo Nginx
+      apt: name=nginx state=absent
+      
+
+    - name: instalando SL no CentOS
+      yum: 
+        name: ['nginx']
+        state: absent
+      notify: restart
+      when: ansible_distribution == "CentOS"
+
+    - name: Garantindo o PATH
+      lineinfile:
+        path: /etc/profile
+        create: yes
+        line: "export PATH=$PATH:/usr/games"
+        state: present
+
+
+    - name: Copiando Arquivo
+      copy:
+        src: /etc/ansible/robin
+        dest: /tmp/dick_grayson
+
+    - name: Copiando Arquivo
+      copy:
+        src: /etc/ansible/robin
+        dest: /tmp/dick_grayson
+
+    - name: Garantindo Hosts
+      lineinfile: 
+        path: /etc/hosts
+        create: yes
+        line: "{{ item }}"
+        state: present
+      with_items:
+      - "192.168.99.10 devops.salas4linux.com.br devops"
+      - "192.168.99.20 docker.salas4linux.com.br docker"
+      - "192.168.99.30 automation.salas4linux.com.br automation"
+
+    - name: Criando Usuário
+      user: name={{ username }} shell=/bin/bash create_home=yes
+
+  handlers:
+    - name: restart
+      service: 
+        name: nginx
+        state: restarted
+
+
+
+
+

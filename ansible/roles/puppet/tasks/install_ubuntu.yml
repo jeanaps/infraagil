@@ -1,0 +1,10 @@
+- name: INSTALAR O REPOSITORIO DO PUPPET - UBUNTU
+  apt:
+    deb: /root/puppet6-release-xenial.deb
+    state: present
+
+- name: Instalando Puppet-Agent - UBUNTU
+  apt: 
+    name: puppet-agent
+    state: present
+    update_cache: yes
